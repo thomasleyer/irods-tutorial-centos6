@@ -1,0 +1,5 @@
+[irods]
+name=irods
+baseurl=file:///vagrant/packages/
+gpgcheck=0
+enabled=1

@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-IRODSVER="4.1.3"
+IRODSVER="4.1.5"
 
 Vagrant.configure(2) do |config|
   config.vm.define "icat1" do |icat1|
@@ -199,8 +199,9 @@ SCRIPT
     icat1.vm.provision :shell, :inline => "yum -y install postgresql-server postgresql postgresql-contrib"
     icat1.vm.provision :shell, :inline => "chkconfig postgresql on"
     icat1.vm.provision :shell, :inline => "service postgresql initdb"
-    icat1.vm.provision :shell, :inline => "yum -y install ftp://ftp.renci.org/pub/irods/releases/" + IRODSVER + "/centos6/irods-icat-" + IRODSVER + "-centos6-x86_64.rpm"
-    icat1.vm.provision :shell, :inline => "yum -y install ftp://ftp.renci.org/pub/irods/releases/" + IRODSVER + "/centos6/irods-database-plugin-postgres-1.5-centos6-x86_64.rpm"
+    icat1.vm.provision :shell, :inline => "cp /vagrant/irods.repo /etc/yum.repos.d/"
+    icat1.vm.provision :shell, :inline => "yum -y install irods-icat"
+    icat1.vm.provision :shell, :inline => "yum -y install irods-database-plugin-postgres"
     icat1.vm.provision :shell, :inline => $setup_postgres
     icat1.vm.provision :shell, :inline => 'su - postgres -c "psql -d postgres -U postgres -c \"\du\""'
     icat1.vm.provision :shell, :inline => 'su - postgres -c "psql -d postgres -U postgres -c \"\l\""'
@@ -223,7 +224,8 @@ SCRIPT
     client1.vm.provision :shell, :inline => $setenforce_0, run: "always"
     client1.vm.provision :shell, :inline => $linux_disable_ipv6, run: "always"
     client1.vm.provision :shell, :inline => $service_iptables_stop, run: "always"
-    client1.vm.provision :shell, :inline => "yum -y install ftp://ftp.renci.org/pub/irods/releases/" + IRODSVER + "/centos6/irods-icommands-" + IRODSVER + "-centos6-x86_64.rpm"
+    client1.vm.provision :shell, :inline => "cp /vagrant/irods.repo /etc/yum.repos.d/"
+    client1.vm.provision :shell, :inline => "yum -y install irods-icommands"
     client1.vm.provision "shell" do |s|
       s.inline = $irods_environment
       s.args   = "icat1 1247 vagrant"
